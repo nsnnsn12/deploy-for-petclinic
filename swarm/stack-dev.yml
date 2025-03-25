@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gradle-app:
-    image: sunggyu496/spring-pet-clinic:latest   # Gradle로 빌드한 이미지의 이름
+    image: sunggyu496/spring-pet-clinic:develop   # Gradle로 빌드한 이미지의 이름
     deploy:
       replicas: 2
       resources:
