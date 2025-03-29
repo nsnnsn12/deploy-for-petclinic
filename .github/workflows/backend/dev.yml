@@ -1,0 +1,38 @@
+name: Deploy bakend to Docker Swarm
+
+on:
+  workflow_dispatch:
+    inputs:
+      example_input:
+        description: "Example input for the workflow"
+        required: false
+        default: "default value"
+env:
+env:
+  APPLICATION_NAME: spring-pet-clinic # 스택 이름
+  DOCKER_IMAGE: sunggyu496/spring-pet-clinic # Docker Hub에 푸시할 이미지 이름
+  REPOSITORY_FOR_DEPLOYMENT: deploy-for-petclinic # swarm stack 파일을 관리하는 레포지토리
+  DEPLOYENT_FILE_PATH: ./swarm/stack-dev.yml # stack.yml 파일의 경로
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: SSH to Remote Server and Deploy Stack
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            [ ! -d "~/${{ env.REPOSITORY_FOR_DEPLOYMENT }}" ] && gh repo clone ${{ env.REPOSITORY_FOR_DEPLOYMENT }}
+            cd ~/${{ env.REPOSITORY_FOR_DEPLOYMENT }}
+            gh repo sync
+            docker login
+            docker stack deploy --with-registry-auth -c ${{env.DEPLOYENT_FILE_PATH}} ${{ env.APPLICATION_NAME}}
