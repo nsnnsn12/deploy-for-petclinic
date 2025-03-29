@@ -8,7 +8,6 @@ on:
         required: false
         default: "default value"
 env:
-env:
   APPLICATION_NAME: spring-pet-clinic # 스택 이름
   DOCKER_IMAGE: sunggyu496/spring-pet-clinic # Docker Hub에 푸시할 이미지 이름
   REPOSITORY_FOR_DEPLOYMENT: deploy-for-petclinic # swarm stack 파일을 관리하는 레포지토리
